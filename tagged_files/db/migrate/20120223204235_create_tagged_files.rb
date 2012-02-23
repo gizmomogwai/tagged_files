@@ -4,6 +4,7 @@ class CreateTaggedFiles < ActiveRecord::Migration
       t.text :sha1
       t.integer :size
       t.text :original_filename
+      t.text :comment
 
       t.timestamps
     end

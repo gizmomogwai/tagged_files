@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(:version => 20120223204235) do
     t.text     "sha1"
     t.integer  "size"
     t.text     "original_filename"
+    t.text     "comment"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
   end

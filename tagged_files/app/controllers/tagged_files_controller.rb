@@ -1,3 +1,5 @@
+require 'digest/sha1'
+
 class TaggedFilesController < ApplicationController
   # GET /tagged_files
   # GET /tagged_files.json
@@ -40,10 +42,17 @@ class TaggedFilesController < ApplicationController
   # POST /tagged_files
   # POST /tagged_files.json
   def create
-    @tagged_file = TaggedFile.new(params[:tagged_file])
+    data = params[:tagged_file]
+    uploaded_file = data.delete(:binary_data)
+    binary_data = uploaded_file.read
+    data[:sha1] = Digest::SHA1.hexdigest(binary_data)
+    data[:size] = binary_data.size
+    data[:original_filename] = uploaded_file.original_filename
+
+    @tagged_file = TaggedFile.new(data)
 
     respond_to do |format|
-      if @tagged_file.save
+      if @tagged_file.save_and_store_file(binary_data)
         format.html { redirect_to @tagged_file, notice: 'Tagged file was successfully created.' }
         format.json { render json: @tagged_file, status: :created, location: @tagged_file }
       else
