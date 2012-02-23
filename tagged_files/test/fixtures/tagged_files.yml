@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  sha1: MyText
+  size: 1
+  original_filename: MyText
+
+two:
+  sha1: MyText
+  size: 1
+  original_filename: MyText

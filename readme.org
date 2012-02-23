@@ -1,0 +1,43 @@
+* Tagged Files for rails 3.2
+
+** Installation
+*** rvm use 1.9.3
+*** rvm gemset create rails32
+*** rvm use 1.9.3@rails32
+*** gem install rails
+
+** Steps
+
+*** Basic Hello World
+#+NAME: create a new rails app
+#+BEGIN_SRC shell
+rails new tagged_files
+#+END_SRC
+
+#+NAME: Gemfile - add haml and act_as_taggable_on
+#+BEGIN_SRC ruby
+gem 'haml-rails'
+gem 'acts-as-taggable-on'
+#+END_SRC
+
+#+NAME: get gems prepare database and create controller scaffold
+#+BEGIN_SRC ruby
+bundle install
+rails generate acts_as_taggable_on:migration
+rails generate scaffold TaggedFile sha1:text size:integer original_filename:text
+adapt
+rake db:migrate
+rails s
+#+END_SRC
+
+check it out
+
+*** Add file upload
+
+*** Add tagging
+#+NAME: add acts_as_taggable to the model
+#+BEGIN_SRC ruby
+  acts_as_taggable
+#+END_SRC
+
+*** Add tagsearch

@@ -1,0 +1,23 @@
+%h1 Listing tagged_files
+
+%table
+  %tr
+    %th Sha1
+    %th Size
+    %th Original filename
+    %th
+    %th
+    %th
+
+  - @tagged_files.each do |tagged_file|
+    %tr
+      %td= tagged_file.sha1
+      %td= tagged_file.size
+      %td= tagged_file.original_filename
+      %td= link_to 'Show', tagged_file
+      %td= link_to 'Edit', edit_tagged_file_path(tagged_file)
+      %td= link_to 'Destroy', tagged_file, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Tagged file', new_tagged_file_path

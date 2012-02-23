@@ -1,0 +1,15 @@
+%p#notice= notice
+
+%p
+  %b Sha1:
+  = @tagged_file.sha1
+%p
+  %b Size:
+  = @tagged_file.size
+%p
+  %b Original filename:
+  = @tagged_file.original_filename
+
+= link_to 'Edit', edit_tagged_file_path(@tagged_file)
+\|
+= link_to 'Back', tagged_files_path
