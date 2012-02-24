@@ -33,8 +33,60 @@ rails s
 check it out
 
 *** Add file upload
+For the fileupload, the scaffolded form needs to be adapted.
+only a file upload box and a comment textfield is needed, the rest (sha1, size, original-filename) can
+be calculated in the receiving controller from the upload-object.
+
+#+NAME: change the _form
+#+BEGIN_SRC haml
+  .field
+    = f.label :comment
+    = f.text_field :comment
+  .field
+    = f.label :binary_data
+    = f.file_field :binary_data
+#+END_SRC
+
+#+NAME: change the create function of the tagged_file_controller
+#+BEGIN_SRC ruby
+    data = params[:tagged_file]
+    uploaded_file = data.delete(:binary_data)
+    binary_data = uploaded_file.read
+    data[:sha1] = Digest::SHA1.hexdigest(binary_data)
+    data[:size] = binary_data.size
+    data[:original_filename] = uploaded_file.original_filename
+
+    @tagged_file = TaggedFile.new(data)
+
+    respond_to do |format|
+      if @tagged_file.save_and_store_file(binary_data)
+#+END_SRC
+
+#+NAME: add save_and_store_file to tagged_file model (validations and file safe)
+#+BEGIN_SRC ruby
+  validates :sha1, :presence => true
+  validates :size, :numericality => { :only_integer => true, :greater_than => 0 }
+  validates :original_filename, :presence => true
+  validates :comment, :presence => true
+
+  def save_and_store_file(data)
+    return false unless save
+
+    begin
+      File.open("store/#{sha1}", "wb") do |io|
+        io.write(data)
+        return true
+      end
+    rescue
+      destroy
+      self.errors[:base] = "Could not write file on server, please contact system administrator"
+      return false
+    end
+  end
+#+END_SRC
 
 *** Add tagging
+for tagging acts as taggable is used which provides the needed database tables and helper functions
 #+NAME: add acts_as_taggable to the model
 #+BEGIN_SRC ruby
   acts_as_taggable
