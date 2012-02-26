@@ -1,11 +1,12 @@
 * Tagged Files for rails 3.2
 
 ** Installation
-*** rvm use 1.9.3
-*** rvm gemset create rails32
-*** rvm use 1.9.3@rails32
-*** gem install rails
-
+#+BEGIN_SRC shell
+rvm use 1.9.3
+rvm gemset create rails32
+rvm use 1.9.3@rails32
+gem install rails
+#+END_SRC
 ** Steps
 
 *** Basic Hello World
