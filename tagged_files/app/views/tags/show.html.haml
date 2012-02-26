@@ -1,0 +1,12 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @tag.name
+
+- TaggedFile.tagged_with(@tag.name).each do |tagged_file|
+  %p= link_to tagged_file.original_filename, tagged_file
+
+= link_to 'Edit', edit_tag_path(@tag)
+\|
+= link_to 'Back', tags_path

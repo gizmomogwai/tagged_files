@@ -92,4 +92,80 @@ for tagging acts as taggable is used which provides the needed database tables a
   acts_as_taggable
 #+END_SRC
 
+#+NAME: we scaffold for tag
+#+BEGIN_SRC bash
+rails generate scaffold TaggedFile sha1:text size:integer original_filename:text
+and remove the new migration (because the table is already there)
+#+END_SRC
+
+add the tags to the view of a tagged_file, the tagged_file_index and add a tagged_files list to the details-view of a tag
+#+NAME: add helper function to tagged_files_helper.rb
+#+BEGIN_SRC ruby
+  def tag_links(tagged_file)
+    tagged_file.tags.map {|tag| link_to(tag.name, Tag.find_by_name(tag.name))}.join(', ')
+  end
+#+END_SRC
+
+#+NAME: add file infos (including tags) to index
+#+BEGIN_SRC haml
+    %th Sha1
+    %th Size
+    %th Original filename
+    %th Comment
+    %th Tags
+...
+      %td= tagged_file.sha1
+      %td= tagged_file.size
+      %td= tagged_file.original_filename
+      %td= tagged_file.comment
+      %td!= tag_links(tagged_file)
+#+END_SRC
+
+#+NAME: add route to routes.rb
+#+BEGIN_SRC ruby
+resources :tags
+#+END_SRC
+
 *** Add tagsearch
+#+NAME: we use the index action in the tagged_files controller add to def index
+#+BEGIN_SRC shell
+    query = param[:query]
+    if query.blank?
+      @tagged_files = TaggedFile.all
+    else
+      @tagged_files = TaggedFile.find_for_query(query)
+    end
+#+END_SRC
+
+#+NAME: add form to index-view
+#+BEGIN_SRC haml
+%br
+= form_tag(tagged_files_path, :method => :get) do |f|
+  .field
+    = label_tag :query
+    = text_field_tag :query
+  .actions
+    = submit_tag :search
+#+END_SRC
+
+#+NAME: add code to index controller
+#+BEGIN_SRC ruby
+    query = params[:query]
+    if query.blank?
+      @tagged_files = TaggedFile.all
+    else
+      @tagged_files = TaggedFile.find_for_query(query)
+    end
+#+END_SRC
+
+#+NAME: add helper to model
+#+BEGIN_SRC ruby
+  def self.find_for_query(query)
+    res = TaggedFile.where('original_filename LIKE ?', query)
+    res = Tag.where('name LIKE ?', query).inject(res) do |res, tag|
+      res | TaggedFile.tagged_with(tag.name)
+    end
+    return res
+  end
+#+END_SRC
+

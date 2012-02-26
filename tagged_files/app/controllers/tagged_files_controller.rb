@@ -4,7 +4,12 @@ class TaggedFilesController < ApplicationController
   # GET /tagged_files
   # GET /tagged_files.json
   def index
-    @tagged_files = TaggedFile.all
+    query = params[:query]
+    if query.blank?
+      @tagged_files = TaggedFile.all
+    else
+      @tagged_files = TaggedFile.find_for_query(query)
+    end
 
     respond_to do |format|
       format.html # index.html.erb

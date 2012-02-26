@@ -4,6 +4,16 @@ class TaggedFile < ActiveRecord::Base
   validates :original_filename, :presence => true
   validates :comment, :presence => true
 
+  acts_as_taggable
+
+  def self.find_for_query(query)
+    res = TaggedFile.where('original_filename LIKE ?', query)
+    res = Tag.where('name LIKE ?', query).inject(res) do |res, tag|
+      res | TaggedFile.tagged_with(tag.name)
+    end
+    return res
+  end
+
   def save_and_store_file(data)
     return false unless save
 

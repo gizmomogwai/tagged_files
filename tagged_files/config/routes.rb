@@ -1,4 +1,6 @@
 TaggedFiles::Application.routes.draw do
+  resources :tags
+
   resources :tagged_files
 
   # The priority is based upon order of creation:
